@@ -19,18 +19,28 @@ const blackHole = {
 let shapes = [];
 let draggingShape = null;
 
-// ---------------------- SHAPE TYPES ----------------------
+// ---------------------- SHAPE TYPES WITH RARITY ----------------------
 const SHAPE_TYPES = [
-    { type: "square", points: 1 },
-    { type: "circle", points: 2 },
-    { type: "triangle", points: 3 },
-    { type: "diamond", points: 5 }
+    { type: "square", points: 1, chance: 0.50 },
+    { type: "circle", points: 2, chance: 0.30 },
+    { type: "triangle", points: 4, chance: 0.15 },
+    { type: "diamond", points: 10, chance: 0.05 }
 ];
+
+function rollShapeType() {
+    let r = Math.random();
+    let sum = 0;
+
+    for (let s of SHAPE_TYPES) {
+        sum += s.chance;
+        if (r < sum) return s;
+    }
+    return SHAPE_TYPES[0];
+}
 
 // ---------------------- MUTATIONS ----------------------
 const MUTATIONS = [
     { name: "none", chance: 0.85, bonus: 0, colorEffect: null },
-
     { name: "spark", chance: 0.10, bonus: 1, colorEffect: "white" },
     { name: "flare", chance: 0.04, bonus: 3, colorEffect: "yellow" },
     { name: "nova", chance: 0.01, bonus: 10, colorEffect: "cyan" },
@@ -51,7 +61,7 @@ function rollMutation() {
 // ---------------------- SPAWN SHAPES ----------------------
 function spawnShape() {
     const size = 40;
-    const shapeType = SHAPE_TYPES[Math.floor(Math.random() * SHAPE_TYPES.length)];
+    const shapeType = rollShapeType();
     const mutation = rollMutation();
 
     shapes.push({
@@ -69,7 +79,8 @@ function spawnShape() {
     }
 }
 
-setInterval(spawnShape, 1000);
+// ⭐ Slower spawn interval (3 seconds)
+setInterval(spawnShape, 3000);
 
 // ---------------------- DRAW SHAPES ----------------------
 function drawShape(s) {
