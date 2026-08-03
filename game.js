@@ -221,6 +221,11 @@ const upgrades = {
     biggerHole: { 
         cost: 10, 
         apply: () => blackHole.radius += 20 
+const upgrades = {
+    A fat hole: { 
+        cost: 20, 
+        apply: () => blackHole.radius += 40
+
     },
 
     doublePoints: { 
