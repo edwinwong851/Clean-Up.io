@@ -16,10 +16,35 @@
             left: 10px;
             font-size: 24px;
         }
+        #shop {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: #222;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        #shop button {
+            margin: 5px;
+            padding: 8px 12px;
+            background: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #shop button:hover {
+            background: #666;
+        }
     </style>
 </head>
 <body>
     <div id="score">Score: 0</div>
+    <div id="shop">
+        <button onclick="buyUpgrade('biggerHole')">Bigger Hole (10)</button>
+        <button onclick="buyUpgrade('doublePoints')">Double Points (20)</button>
+        <button onclick="buyUpgrade('autoCollector')">Auto Collector (30)</button>
+    </div>
     <canvas id="game"></canvas>
     <script src="game.js"></script>
 </body>
