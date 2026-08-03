@@ -7,9 +7,16 @@ canvas.height = window.innerHeight;
 let score = 0;
 const scoreDisplay = document.getElementById("score");
 
+// ---------------------- UPGRADE VARIABLES ----------------------
 let scoreMultiplier = 1;
-let autoCollector = false;
+let scoreMultiplierLevel = 0;
+const scoreMultiplierMax = 5;
 
+let autoCollector = false;
+let autoCollectorLevel = 0;
+const autoCollectorMax = 5;
+
+// ---------------------- BLACK HOLE ----------------------
 const blackHole = {
     x: canvas.width / 2,
     y: canvas.height / 2,
@@ -79,8 +86,8 @@ function spawnShape() {
     }
 }
 
-// ⭐ Slower spawn interval (3 seconds)
-setInterval(spawnShape, 3000);
+// ⭐ Slower spawn interval (4 seconds)
+setInterval(spawnShape, 4000);
 
 // ---------------------- DRAW SHAPES ----------------------
 function drawShape(s) {
@@ -150,17 +157,26 @@ canvas.addEventListener("mouseup", () => {
     draggingShape = null;
 });
 
-// ---------------------- UPDATES ----------------------
+// ---------------------- UPDATE ----------------------
 function update() {
     shapes = shapes.filter(s => {
 
+        // AUTO COLLECTOR (with level scaling)
         if (autoCollector) {
             const dx = blackHole.x - (s.x + s.size/2);
             const dy = blackHole.y - (s.y + s.size/2);
-            s.x += dx * 0.01;
-            s.y += dy * 0.01;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            const pullRadius = 150 + autoCollectorLevel * 40;
+            const pullStrength = 0.01 + autoCollectorLevel * 0.005;
+
+            if (dist < pullRadius) {
+                s.x += dx * pullStrength;
+                s.y += dy * pullStrength;
+            }
         }
 
+        // Black hole collision
         const dx = (s.x + s.size / 2) - blackHole.x;
         const dy = (s.y + s.size / 2) - blackHole.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -202,9 +218,30 @@ gameLoop();
 
 // ---------------------- UPGRADES ----------------------
 const upgrades = {
-    biggerHole: { cost: 10, apply: () => blackHole.radius += 20 },
-    doublePoints: { cost: 20, apply: () => scoreMultiplier *= 2 },
-    autoCollector: { cost: 30, apply: () => autoCollector = true }
+    biggerHole: { 
+        cost: 10, 
+        apply: () => blackHole.radius += 20 
+    },
+
+    doublePoints: { 
+        cost: 20, 
+        apply: () => {
+            if (scoreMultiplierLevel < scoreMultiplierMax) {
+                scoreMultiplierLevel++;
+                scoreMultiplier = 1 + scoreMultiplierLevel;
+            }
+        }
+    },
+
+    autoCollector: { 
+        cost: 30, 
+        apply: () => {
+            if (autoCollectorLevel < autoCollectorMax) {
+                autoCollectorLevel++;
+                autoCollector = true;
+            }
+        }
+    }
 };
 
 function buyUpgrade(name) {
